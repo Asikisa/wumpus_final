@@ -325,7 +325,10 @@ class Display:
         if sim.lastPos != sim.agentPos:
             r = sim.lastPos[0]
             c = sim.lastPos[1]
-            tempImg = self.set_room(r, c, sim)
+            if sim.hasGold:
+                tempImg = PhotoImage(file="Images/emptyroom.gif")
+            else:
+                tempImg = self.set_room(r, c, sim)
             self.grid['room' + str(r) + str(c)].config(image=tempImg)
             self.grid['room' + str(r) + str(c)].image = tempImg
         r = sim.agentPos[0]
