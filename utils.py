@@ -1,11 +1,8 @@
-"""Provides some utilities widely used by other modules"""
-
-
 import collections.abc
 
 
 def remove_all(item, seq):
-    """Return a copy of seq (or string) with all occurrences of item removed."""
+    # return a copy of seq (or string) with all occurrences of item removed
     if isinstance(seq, str):
         return seq.replace(item, '')
     elif isinstance(seq, set):
@@ -17,26 +14,22 @@ def remove_all(item, seq):
 
 
 def first(iterable, default=None):
-    """Return the first element of an iterable; or default."""
+    # return the first element of an iterable or default
     return next(iter(iterable), default)
 
 
 def extend(s, var, val):
-    """Copy dict s and extend it by setting var to val; return copy."""
+    # copy dict s and extend it by setting var to val and return copy
     return {**s, var: val}
 
 
 class Expr:
-    """A mathematical expression with an operator and 0 or more arguments.
-    op is a str like '+' or 'sin'; args are Expressions.
-    Expr('x') or Symbol('x') creates a symbol (a nullary Expr).
-    Expr('-', x) creates a unary; Expr('+', x, 1) creates a binary."""
+    # mathematical expression with an operator and 0 or more arguments
 
     def __init__(self, op, *args):
         self.op = str(op)
         self.args = args
 
-    # Operator overloads
     def __neg__(self):
         return Expr('-', self)
 
@@ -89,48 +82,48 @@ class Expr:
         else:
             return PartialExpr(rhs, self)
 
-    # Reverse operator overloads
-    def __radd__(self, lhs):
-        return Expr('+', lhs, self)
-
-    def __rsub__(self, lhs):
-        return Expr('-', lhs, self)
-
-    def __rmul__(self, lhs):
-        return Expr('*', lhs, self)
-
-    def __rdiv__(self, lhs):
-        return Expr('/', lhs, self)
-
-    def __rpow__(self, lhs):
-        return Expr('**', lhs, self)
-
-    def __rmod__(self, lhs):
-        return Expr('%', lhs, self)
-
-    def __rand__(self, lhs):
-        return Expr('&', lhs, self)
-
-    def __rxor__(self, lhs):
-        return Expr('^', lhs, self)
-
-    def __ror__(self, lhs):
-        return Expr('|', lhs, self)
-
-    def __rrshift__(self, lhs):
-        return Expr('>>', lhs, self)
-
-    def __rlshift__(self, lhs):
-        return Expr('<<', lhs, self)
-
-    def __rtruediv__(self, lhs):
-        return Expr('/', lhs, self)
-
-    def __rfloordiv__(self, lhs):
-        return Expr('//', lhs, self)
-
-    def __rmatmul__(self, lhs):
-        return Expr('@', lhs, self)
+    # # Reverse operator overloads
+    # def __radd__(self, lhs):
+    #     return Expr('+', lhs, self)
+    #
+    # def __rsub__(self, lhs):
+    #     return Expr('-', lhs, self)
+    #
+    # def __rmul__(self, lhs):
+    #     return Expr('*', lhs, self)
+    #
+    # def __rdiv__(self, lhs):
+    #     return Expr('/', lhs, self)
+    #
+    # def __rpow__(self, lhs):
+    #     return Expr('**', lhs, self)
+    #
+    # def __rmod__(self, lhs):
+    #     return Expr('%', lhs, self)
+    #
+    # def __rand__(self, lhs):
+    #     return Expr('&', lhs, self)
+    #
+    # def __rxor__(self, lhs):
+    #     return Expr('^', lhs, self)
+    #
+    # def __ror__(self, lhs):
+    #     return Expr('|', lhs, self)
+    #
+    # def __rrshift__(self, lhs):
+    #     return Expr('>>', lhs, self)
+    #
+    # def __rlshift__(self, lhs):
+    #     return Expr('<<', lhs, self)
+    #
+    # def __rtruediv__(self, lhs):
+    #     return Expr('/', lhs, self)
+    #
+    # def __rfloordiv__(self, lhs):
+    #     return Expr('//', lhs, self)
+    #
+    # def __rmatmul__(self, lhs):
+    #     return Expr('@', lhs, self)
 
     def __call__(self, *args):
         """Call: if 'f' is a Symbol, then f(0) == Expr('f', 0)."""
@@ -162,26 +155,22 @@ class Expr:
             return '(' + opp.join(args) + ')'
 
 
-# An 'Expression' is either an Expr or a Number.
-# Symbol is not an explicit type; it is any Expr with 0 args.
-
-
 Number = (int, float, complex)
-Expression = (Expr, Number)
+Expression = (Expr, Number)  # An 'Expression' is either an Expr or a Number.
 
 
 def Symbol(name):
-    """A Symbol is just an Expr with no args."""
+    # a Symbol is an Expr with no args
     return Expr(name)
 
 
 def symbols(names):
-    """Return a tuple of Symbols; names is a comma/whitespace delimited str."""
+    # return a tuple of Symbols; names is a comma/whitespace delimited str
     return tuple(Symbol(name) for name in names.replace(',', ' ').split())
 
 
 def subexpressions(x):
-    """Yield the subexpressions of an Expression (including x itself)."""
+    # Yield the subexpressions of an Expression (including x itself)
     yield x
     if isinstance(x, Expr):
         for arg in x.args:
@@ -189,18 +178,17 @@ def subexpressions(x):
 
 
 def arity(expression):
-    """The number of sub-expressions in this expression."""
+    # number of sub-expressions in this expression
     if isinstance(expression, Expr):
         return len(expression.args)
     else:  # expression is a number
         return 0
 
 
-# For operators that are not defined in Python, we allow new InfixOps:
+# For operators that are not defined in Python
 
 
 class PartialExpr:
-    """Given 'P |'==>'| Q, first form PartialExpr('==>', P), then combine with Q."""
 
     def __init__(self, op, lhs):
         self.op, self.lhs = op, lhs
@@ -213,13 +201,6 @@ class PartialExpr:
 
 
 def expr(x):
-    """Shortcut to create an Expression. x is a str in which:
-    - identifiers are automatically defined as Symbols.
-    - ==> is treated as an infix |'==>'|, as are <== and <=>.
-    If x is already an Expression, it is returned unchanged. Example:
-    >>> expr('P & Q ==> Q')
-    ((P & Q) ==> Q)
-    """
     return eval(expr_handle_infix_ops(x), defaultkeydict(Symbol)) if isinstance(x, str) else x
 
 
@@ -227,20 +208,15 @@ infix_ops = '==> <== <=>'.split()
 
 
 def expr_handle_infix_ops(x):
-    """Given a str, return a new str with ==> replaced by |'==>'|, etc.
-    >>> expr_handle_infix_ops('P ==> Q')
-    "P |'==>'| Q"
-    """
+    # given a str, return a new str with ==> replaced by |'==>'|, etc.
+
     for op in infix_ops:
         x = x.replace(op, '|' + repr(op) + '|')
     return x
 
 
 class defaultkeydict(collections.defaultdict):
-    """Like defaultdict, but the default_factory is a function of the key.
-    >>> d = defaultkeydict(len); d['four']
-    4
-    """
+    # Like defaultdict, but the default_factory is a function of the key.
 
     def __missing__(self, key):
         self[key] = result = self.default_factory(key)
@@ -248,19 +224,13 @@ class defaultkeydict(collections.defaultdict):
 
 
 class hashabledict(dict):
-    """Allows hashing by representing a dictionary as tuple of key:value pairs.
-    May cause problems as the hash value may change during runtime."""
+    # allows hashing by representing a dictionary as tuple of key:value pairs
 
     def __hash__(self):
         return 1
 
 
-# ______________________________________________________________________________
-# Useful Shorthands
-
-
 class Bool(int):
-    """Just like `bool`, except values display as 'T' and 'F' instead of 'True' and 'False'."""
     __str__ = __repr__ = lambda self: 'T' if self else 'F'
 
 

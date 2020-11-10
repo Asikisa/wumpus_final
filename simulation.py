@@ -1,4 +1,3 @@
-
 # Includes classes for the simulation and the Tkinter display of the simulation.
 # Also includes code to process the command-line input and run the program accordingly.
 
@@ -7,11 +6,6 @@ from wwagent import *
 import sys
 from tkinter import *
 from random import randint
-
-# in your inner loop use it thus (just an example, I would probably use a named tuple)
-#
-# wwagent.update(percept) # update the agent with the current percept
-# action = wwagent.action() # get the next action to take from the agent
 
 # Global Constants
 COLUMNS = 4

@@ -1,8 +1,5 @@
 """"
-
-Includes classes for the agent and his knowledge base.  Some useful methods
-are also in this file.
-
+Class for the agent and his knowledge base.
 
 # FACING KEY:
 #    0 = up
@@ -16,7 +13,7 @@ from random import randint
 
 
 def get_neighbors(r, c):
-    #    Returns a list of the neighbors of position (r, c).
+    # returns a list of the neighbors of position (r, c).
     neighbors = set()
     if (r + 1) in range(4):
         neighbors.add((r + 1, c))
@@ -29,7 +26,7 @@ def get_neighbors(r, c):
     return neighbors
 
 
-class WWKB():
+class Wumpus_World_KB():
 
     def __init__(self):
         # Knows there is no pit or wumpus in the starting spot
@@ -78,7 +75,7 @@ class WWAgent:
         self.position = (3, 0)
         self.lastPos = (3, 0)
         self.facing = 1
-        self.kb = WWKB()
+        self.kb = Wumpus_World_KB()
         self.visited = set()
         self.lastAction = None
         self.plan = ['move']
@@ -195,7 +192,6 @@ class WWAgent:
             currPos = p
         # put plan in correct order
         plan.reverse()
-        # print 'Plan: ', plan
 
         return plan
 
@@ -232,7 +228,6 @@ class WWAgent:
             # Using corner logic
             # UPDATE SURROUNDINGS
             temp = get_neighbors(pos[0], pos[1]) - self.visited
-            # print "surrounding-visited: ", temp
             temp = temp - self.safe
             temp = temp - self.notsafe
             tempS = set()
@@ -274,7 +269,6 @@ class WWAgent:
         elif (len(self.plan) > 0):
             # TAKE ACTION FROM PLAN
             action = self.plan.pop()
-            # print "plan:action: ", action
         else:
             # CREATE PLAN
             # If the agent has gold his next goal should be the exit (start square)
