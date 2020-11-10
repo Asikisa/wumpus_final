@@ -1,5 +1,5 @@
 # Includes classes for the simulation and the Tkinter display of the simulation.
-# Also includes code to process the command-line input and run the program accordingly.
+# Also includes code to run program in the command-line.
 
 
 from wwagent import *
@@ -38,42 +38,42 @@ class Simulation:
         self.hasGold = False
 
     def set_percepts(self, r, c, item):
-        if (item == 'gold'):
+        if item == 'gold':
             p = self.percepts['room' + str(r) + str(c)]
             self.percepts['room' + str(r) + str(c)] = (p[0], p[1], 'glitter', p[3], p[4])
-        if (item == 'wumpus'):
+        if item == 'wumpus':
             p = self.percepts['room' + str(r) + str(c)]
             # self.percepts['room'+str(r)+str(c)] = ('stench', p[1], p[2], p[3], p[4])
-            if ((r - 1) >= 0):
+            if (r - 1) >= 0:
                 p = self.percepts['room' + str(r - 1) + str(c)]
                 self.percepts['room' + str(r - 1) + str(c)] = ('stench', p[1], p[2], p[3], p[4])
-            if ((r + 1) < 4):
+            if (r + 1) < 4:
                 p = self.percepts['room' + str(r + 1) + str(c)]
                 self.percepts['room' + str(r + 1) + str(c)] = ('stench', p[1], p[2], p[3], p[4])
-            if ((c - 1) >= 0):
+            if (c - 1) >= 0:
                 p = self.percepts['room' + str(r) + str(c - 1)]
                 self.percepts['room' + str(r) + str(c - 1)] = ('stench', p[1], p[2], p[3], p[4])
-            if ((c + 1) < 4):
+            if (c + 1) < 4:
                 p = self.percepts['room' + str(r) + str(c + 1)]
                 self.percepts['room' + str(r) + str(c + 1)] = ('stench', p[1], p[2], p[3], p[4])
-        if (item == 'pit'):
-            if ((r - 1) >= 0):
+        if item == 'pit':
+            if (r - 1) >= 0:
                 p = self.percepts['room' + str(r - 1) + str(c)]
                 self.percepts['room' + str(r - 1) + str(c)] = (p[0], 'breeze', p[2], p[3], p[4])
-            if ((r + 1) < 4):
+            if (r + 1) < 4:
                 p = self.percepts['room' + str(r + 1) + str(c)]
                 self.percepts['room' + str(r + 1) + str(c)] = (p[0], 'breeze', p[2], p[3], p[4])
-            if ((c - 1) >= 0):
+            if (c - 1) >= 0:
                 p = self.percepts['room' + str(r) + str(c - 1)]
                 self.percepts['room' + str(r) + str(c - 1)] = (p[0], 'breeze', p[2], p[3], p[4])
-            if ((c + 1) < 4):
+            if (c + 1) < 4:
                 p = self.percepts['room' + str(r) + str(c + 1)]
                 self.percepts['room' + str(r) + str(c + 1)] = (p[0], 'breeze', p[2], p[3], p[4])
 
     def generate_simulation(self):
         # Set wumpus location
         self.wumpusLoc = (randint(0, 3), randint(0, 3))
-        while (self.wumpusLoc == (3, 0)):
+        while self.wumpusLoc == (3, 0):
             self.wumpusLoc = (randint(0, 3), randint(0, 3))
         # Set wumpus percepts
         self.set_percepts(self.wumpusLoc[0], self.wumpusLoc[1], 'wumpus')
@@ -110,83 +110,83 @@ class Simulation:
                 self.percepts['room' + str(r) + str(c)] = (None, None, None, None, None)
 
     def agent_move(self, action):
-        if (action == 'shoot'):
+        if action == 'shoot':
             self.score = self.score - 10
         else:
             self.score = self.score - 1
         r = self.agentPos[0]
         c = self.agentPos[1]
-        if (action == 'move'):
+        if action == 'move':
             self.lastPos = self.agentPos
             bump = False
-            if (self.agentFacing == 'right'):
-                if ((c + 1) < 4):
+            if self.agentFacing == 'right':
+                if (c + 1) < 4:
                     self.agentPos = (self.agentPos[0], self.agentPos[1] + 1)
                 else:
                     bump = True
-            elif (self.agentFacing == 'up'):
-                if ((r - 1) >= 0):
+            elif self.agentFacing == 'up':
+                if (r - 1) >= 0:
                     self.agentPos = (self.agentPos[0] - 1, self.agentPos[1])
                 else:
                     bump = True
-            elif (self.agentFacing == 'left'):
-                if ((c - 1) >= 0):
+            elif self.agentFacing == 'left':
+                if (c - 1) >= 0:
                     self.agentPos = (self.agentPos[0], self.agentPos[1] - 1)
                 else:
                     bump = True
             else:
-                if ((r + 1) < 4):
+                if (r + 1) < 4:
                     self.agentPos = (self.agentPos[0] + 1, self.agentPos[1])
                 else:
                     bump = True
-            if (bump):
+            if bump:
                 p = self.percepts['room' + str(r) + str(c)]
                 self.percepts['room' + str(r) + str(c)] = (p[0], p[1], p[2], 'bump', p[4])
             p = self.percepts['room' + str(r) + str(c)]
             self.percepts['room' + str(r) + str(c)] = (p[0], p[1], p[2], p[3], None)
             self.lastMove = 'Move Forward'
-        elif (action == 'grab'):
-            if (self.agentPos == self.goldLocation):
+        elif action == 'grab':
+            if self.agentPos == self.goldLocation:
                 self.hasGold = True
             self.lastMove = "Grab"
-        elif (action == 'climb'):
+        elif action == 'climb':
             self.lastMove = 'Climb'
-        elif (action == 'shoot'):
-            if (self.arrow != 0):
-                if (self.agentFacing == 'up'):
-                    if (c == self.wumpusLoc[1]) and (r > self.wumpusLoc[0]):
+        elif action == 'shoot':
+            if self.arrow != 0:
+                if self.agentFacing == 'up':
+                    if c == self.wumpusLoc[1] and r > self.wumpusLoc[0]:
                         self.wumpusAlive = False
-                elif (self.agentFacing == 'right'):
+                elif self.agentFacing == 'right':
                     if (r == self.wumpusLoc[0]) and (c < self.wumpusLoc[1]):
                         self.wumpusAlive = False
-                elif (self.agentFacing == 'left'):
+                elif self.agentFacing == 'left':
                     if (r == self.wumpusLoc[0]) and (c > self.wumpusLoc[1]):
                         self.wumpusAlive = False
                 else:
                     if (c == self.wumpusLoc[1]) and (r < self.wumpusLoc[0]):
                         self.wumpusAlive = False
                 self.arrow = 0
-            if (self.wumpusAlive == False):
+            if self.wumpusAlive == False:
                 p = self.percepts['room' + str(r) + str(c)]
                 self.percepts['room' + str(r) + str(c)] = (p[0], p[1], p[2], None, 'scream')
             self.lastMove = 'Shoot'
         else:
-            if (action == 'left'):
-                if (self.agentFacing == 'right'):
+            if action == 'left':
+                if self.agentFacing == 'right':
                     self.agentFacing = 'up'
-                elif (self.agentFacing == 'up'):
+                elif self.agentFacing == 'up':
                     self.agentFacing = 'left'
-                elif (self.agentFacing == 'left'):
+                elif self.agentFacing == 'left':
                     self.agentFacing = 'down'
                 else:
                     self.agentFacing = 'right'
                 self.lastMove = 'Rotate Left'
             else:
-                if (self.agentFacing == 'right'):
+                if self.agentFacing == 'right':
                     self.agentFacing = 'down'
-                elif (self.agentFacing == 'down'):
+                elif self.agentFacing == 'down':
                     self.agentFacing = 'left'
-                elif (self.agentFacing == 'left'):
+                elif self.agentFacing == 'left':
                     self.agentFacing = 'up'
                 else:
                     self.agentFacing = 'right'
@@ -200,9 +200,9 @@ class Simulation:
         c = self.agentPos[1]
         if (self.agentPos == self.wumpusLoc) and (self.wumpusAlive == True):
             return True
-        elif (self.pits['room' + str(r) + str(c)]):
+        elif self.pits['room' + str(r) + str(c)]:
             return True
-        elif (self.agentPos == (3, 0)) and self.lastMove.lower() == 'climb':
+        elif self.agentPos == (3, 0) and self.lastMove.lower() == 'climb':
             return True
         else:
             return False
@@ -212,10 +212,10 @@ class Simulation:
         c = self.agentPos[1]
         if (self.agentPos == self.wumpusLoc) and (self.wumpusAlive == True):
             self.score = self.score - 1000
-        elif (self.pits['room' + str(r) + str(c)]):
+        elif self.pits['room' + str(r) + str(c)]:
             self.score = self.score - 1000
-        elif (self.agentPos == (3, 0)) and self.lastMove.lower() == 'climb':
-            if (self.hasGold):
+        elif self.agentPos == (3, 0) and self.lastMove.lower() == 'climb':
+            if self.hasGold:
                 self.score = self.score + 1000
 
     def move(self):
@@ -238,11 +238,11 @@ class Display:
     def set_room(self, r, c, sim):
         # Returns agent image
         if (sim.agentPos[0] == r) and (sim.agentPos[1] == c):
-            if (sim.agentFacing.lower() == 'right'):
+            if sim.agentFacing.lower() == 'right':
                 return PhotoImage(file="Images/agent-right.png")
-            elif (sim.agentFacing.lower() == 'up'):
+            elif sim.agentFacing.lower() == 'up':
                 return PhotoImage(file="Images/agent-up.png")
-            elif (sim.agentFacing.lower() == 'left'):
+            elif sim.agentFacing.lower() == 'left':
                 return PhotoImage(file="Images/agent-left.png")
             else:
                 return PhotoImage(file="Images/agent-down.gif")
@@ -251,25 +251,26 @@ class Display:
             return PhotoImage(file="Images/start.png")
         # Returns wumpus
         elif (r == sim.wumpusLoc[0]) and (c == sim.wumpusLoc[1]):
-            if (sim.pits['room' + str(r) + str(c)]):
+            if sim.pits['room' + str(r) + str(c)]:
                 return PhotoImage(file="Images/pit-wumpus.png")
             else:
                 return PhotoImage(file="Images/live-wumpus.png")
         # Returns gold and pit or gold
         elif (r == sim.goldLocation[0]) and (c == sim.goldLocation[1]):
-            if (sim.pits['room' + str(r) + str(c)]):
+            if sim.pits['room' + str(r) + str(c)]:
                 return PhotoImage(file="Images/gold-pit.png")
             else:
                 return PhotoImage(file="Images/gold.png")
         # Returns a pit
-        elif (sim.pits['room' + str(r) + str(c)]):
+        elif sim.pits['room' + str(r) + str(c)]:
             return PhotoImage(file="Images/pit.png")
         # Returns an empty room
         else:
             return PhotoImage(file="Images/emptyroom.gif")
 
     def __init__(self, master, simulation):
-        frame = Frame(master, width=700, height=500)
+        frame = Frame(master, width=720, height=500)
+        frame.config(background='black')
         frame.pack()
         self.grid = {}
         self.score = StringVar()
@@ -282,27 +283,27 @@ class Display:
         self.arrowStatus.set('Available')
         self.agentDirection.set('Right')
         self.percepts.set(str(simulation.percepts['room30']))
-        theScoreDis = Label(master, font=(FONTTYPE, 16), text="Performance:")
-        lastMoveDis = Label(master, font=(FONTTYPE, 16), text="Last Move:")
-        performanceDis = Label(master, font=(FONTTYPE, 14), textvariable=self.score)
-        pastMoveDis = Label(master, font=(FONTTYPE, 14), textvariable=self.pastMove)
-        arrowTitle = Label(master, font=(FONTTYPE, 16), text="Arrow Status:")
-        self.arrowStatusDis = Label(master, font=(FONTTYPE, 14), fg='Green', textvariable=self.arrowStatus)
-        perceptsTitle = Label(master, font=(FONTTYPE, 16), text="Current Percepts:")
-        perceptsDis = Label(master, font=(FONTTYPE, 14), textvariable=self.percepts)
-        agentDirectionTitle = Label(master, font=(FONTTYPE, 16), text="Agent Facing:")
-        agentDirectionDis = Label(master, font=(FONTTYPE, 14), textvariable=self.agentDirection)
-        self.goldStatus = Label(master, font=(FONTTYPE, 16), fg='Gold', text="Agent has gold!")
-        performanceDis.place(x=420, y=25)
-        theScoreDis.place(x=420, y=0)
-        arrowTitle.place(x=420, y=75)
-        self.arrowStatusDis.place(x=420, y=100)
-        lastMoveDis.place(x=420, y=150)
-        pastMoveDis.place(x=420, y=175)
-        perceptsTitle.place(x=5, y=420)
-        perceptsDis.place(x=5, y=445)
-        agentDirectionTitle.place(x=420, y=285)
-        agentDirectionDis.place(x=420, y=312)
+        theScoreDis = Label(master, font=(FONTTYPE, 16), fg='white', bg='black', text="Performance:")
+        lastMoveDis = Label(master, font=(FONTTYPE, 16), fg='white', bg='black', text="Last Move:")
+        performanceDis = Label(master, font=(FONTTYPE, 14), fg='white', bg='black',  textvariable=self.score)
+        pastMoveDis = Label(master, font=(FONTTYPE, 14), fg='white', bg='black', textvariable=self.pastMove)
+        arrowTitle = Label(master, font=(FONTTYPE, 16),fg='white', bg='black',  text="Arrow Status:")
+        self.arrowStatusDis = Label(master, font=(FONTTYPE, 14), fg='Green', bg='black', textvariable=self.arrowStatus)
+        perceptsTitle = Label(master, font=(FONTTYPE, 16), fg='white', bg='black', text="Current Percepts:")
+        perceptsDis = Label(master, font=(FONTTYPE, 14), fg='white', bg='black', textvariable=self.percepts)
+        agentDirectionTitle = Label(master, font=(FONTTYPE, 16), fg='white', bg='black', text="Agent Facing:")
+        agentDirectionDis = Label(master, font=(FONTTYPE, 14), fg='white', bg='black', textvariable=self.agentDirection)
+        self.goldStatus = Label(master, font=(FONTTYPE, 16), fg='Gold', bg='black', text="Agent has gold!")
+        performanceDis.place(x=20, y=25)
+        theScoreDis.place(x=20, y=0)
+        arrowTitle.place(x=20, y=75)
+        self.arrowStatusDis.place(x=20, y=100)
+        lastMoveDis.place(x=20, y=150)
+        pastMoveDis.place(x=20, y=175)
+        perceptsTitle.place(x=300, y=420)
+        perceptsDis.place(x=300, y=445)
+        agentDirectionTitle.place(x=20, y=285)
+        agentDirectionDis.place(x=20, y=312)
 
         # creating the initial grid
         for r in range(ROWS):
@@ -310,7 +311,7 @@ class Display:
                 tkimage = self.set_room(r, c, simulation)
                 self.grid['room' + str(r) + str(c)] = Label(master, image=tkimage)
                 self.grid['room' + str(r) + str(c)].image = tkimage
-                self.grid['room' + str(r) + str(c)].place(x=c * 100 + c * 2, y=r * 100 + r * 2)
+                self.grid['room' + str(r) + str(c)].place(x=c * 100 + c * 2 + 300, y=r * 100 + r * 2 + 10)
 
         # initializations
 
@@ -318,10 +319,10 @@ class Display:
         self.score.set(str(sim.score))
         self.pastMove.set(sim.lastMove)
         self.agentDirection.set(sim.agentFacing.title())
-        if (sim.arrow == 0):
+        if sim.arrow == 0:
             self.arrowStatus.set('Used')
             self.arrowStatusDis.config(fg='Red')
-        if (sim.lastPos != sim.agentPos):
+        if sim.lastPos != sim.agentPos:
             r = sim.lastPos[0]
             c = sim.lastPos[1]
             tempImg = self.set_room(r, c, sim)
@@ -334,224 +335,204 @@ class Display:
         self.grid['room' + str(r) + str(c)].image = tempImg
         currentPercepts = sim.percepts['room' + str(sim.agentPos[0]) + str(sim.agentPos[1])]
         self.percepts.set(str(currentPercepts))
-        if (sim.hasGold):
-            self.goldStatus.place(x=500, y=225)
-        if (sim.arrow == 0):
+        if sim.hasGold:
+            self.goldStatus.place(x=100, y=225)
+            # empty_grid = PhotoImage(file="Images/emptyroom.gif")
+            # self.grid['room' + str(r) + str(c)].config(image=empty_grid)
+            # self.grid['room' + str(r) + str(c)].image = empty_grid
+        if sim.arrow == 0:
             self.arrowStatus.set('Used')
-        if (sim.wumpusAlive == False):
+        if not sim.wumpusAlive:
             loc = sim.wumpusLoc
-            if (sim.agentPos != sim.wumpusLoc):
+            if sim.agentPos != sim.wumpusLoc:
                 temp = PhotoImage(file="Images/dead-wumpus.png")
             else:
                 temp = self.set_room(loc[0], loc[1], sim)
             self.grid['room' + str(loc[0]) + str(loc[1])].config(image=temp)
             self.grid['room' + str(loc[0]) + str(loc[1])].image = temp
 
-    def reset_display(self, sim):
+    def reset_display(self, simm):
         for r in range(ROWS):
             for c in range(COLUMNS):
-                tkimage = self.set_room(r, c, sim)
+                tkimage = self.set_room(r, c, simm)
                 self.grid['room' + str(r) + str(c)].config(image=tkimage)
                 self.grid['room' + str(r) + str(c)].image = tkimage
-        self.score.set(str(sim.score))
-        self.pastMove.set(sim.lastMove)
-        self.agentDirection.set(sim.agentFacing.title())
+        self.score.set(str(simm.score))
+        self.pastMove.set(simm.lastMove)
+        self.agentDirection.set(simm.agentFacing.title())
         self.arrowStatus.set('Available')
         self.arrowStatusDis.config(fg='Green')
-        currentPercepts = sim.percepts['room' + str(sim.agentPos[0]) + str(sim.agentPos[1])]
-        self.percepts.set(str(currentPercepts))
+        current_percepts = simm.percepts['room' + str(simm.agentPos[0]) + str(simm.agentPos[1])]
+        self.percepts.set(str(current_percepts))
         self.goldStatus.place_forget()
 
 
-# Interpret command-line call with arguments
+def run_gui():
+    print('Running GUI...')
+    # RUN SIMULATION WITH GUI DISPLAY
+    root = Tk()
+    root.config(bg='black')
+    root.wm_title("Wumpus World Simulation")
+    sim = Simulation(ROWS, COLUMNS, 0)
+    sim.generate_simulation()
+    app = Display(root, sim)
 
-arglist = sys.argv
-if (len(sys.argv) == 2):
-    if (arglist[1].lower() == '-gui'):
-        print('Running GUI...')
-        # RUN SIMULATION WITH GUI DISPLAY
-        root = Tk()
-        root.wm_title("Wumpus World Simulation")
-        sim = Simulation(ROWS, COLUMNS, 0)
+    # Updates the sim with each move
+
+    def resetGame():
+        sim.reset_stats(0)
         sim.generate_simulation()
-        app = Display(root, sim)
+        app.reset_display(sim)
+        eaten.place_forget()
+        fell.place_forget()
+        climbOut.place_forget()
+        makeMove.place(x=20, y=225)
+
+    def updateSim():
+        sim.move()
+        sim.update_score()
+        if sim.terminal_test() and sim.lastMove.lower() == 'climb':
+            climbOut.place(x=20, y=400)
+            makeMove.place_forget()
+        elif sim.terminal_test():
+            if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
+                eaten.place(x=20, y=400)
+            else:
+                fell.place(x=20, y=400)
+            makeMove.place_forget()
+        app.update_move(sim)
+
+    # Methods for the buttons to operate the agent manually
+    def movePlayer():
+        sim.agent_move('move')
+        sim.update_score()
+        if sim.terminal_test():
+            if sim.agentPos == sim.wumpusLoc and sim.wumpusAlive is True:
+                eaten.place(x=20, y=400)
+            else:
+                fell.place(x=20, y=400)
+            makeMove.place_forget()
+        app.update_move(sim)
+
+    def moveLeft():
+        sim.agent_move('left')
+        sim.update_score()
+        if sim.terminal_test():
+            if sim.agentPos == sim.wumpusLoc and sim.wumpusAlive is True:
+                eaten.place(x=20, y=400)
+            else:
+                fell.place(x=20, y=400)
+            makeMove.place_forget()
+        app.update_move(sim)
+
+    def moveRight():
+        sim.agent_move('right')
+        sim.update_score()
+        if sim.terminal_test():
+            if sim.agentPos == sim.wumpusLoc and sim.wumpusAlive is True:
+                eaten.place(x=20, y=400)
+            else:
+                fell.place(x=20, y=400)
+            makeMove.place_forget()
+        app.update_move(sim)
+
+    def grab():
+        sim.agent_move('grab')
+        sim.update_score()
+        if sim.terminal_test():
+            if sim.agentPos == sim.wumpusLoc and sim.wumpusAlive is True:
+                eaten.place(x=20, y=400)
+            else:
+                fell.place(x=20, y=400)
+            makeMove.place_forget()
+        app.update_move(sim)
+
+    def climb():
+        sim.agent_move('climb')
+        sim.update_score()
+        if (sim.terminal_test()):
+            if sim.agentPos == sim.wumpusLoc and sim.wumpusAlive is True:
+                eaten.place(x=20, y=400)
+            else:
+                fell.place(x=20, y=400)
+            makeMove.place_forget()
+        app.update_move(sim)
+
+    def shoot():
+        sim.agent_move('shoot')
+        sim.update_score()
+        if sim.terminal_test():
+            if sim.agentPos == sim.wumpusLoc and sim.wumpusAlive is True:
+                eaten.place(x=20, y=400)
+            else:
+                fell.place(x=20, y=400)
+            makeMove.place_forget()
+        app.update_move(sim)
+
+    # The move button
+    makeMove = Button(root, text="Move", font=(FONTTYPE, 14), command=updateSim)
+    makeMove.place(x=20, y=225)
+
+    reset = Button(root, text="Reset", font=(FONTTYPE, 14), command=resetGame)
+    eaten = Label(root, text="WUMPUS ATE AGENT", fg='Red', bg='black', font=(FONTTYPE, 16))
+    climbOut = Label(root, text="Player climbed out", fg='Green', bg='black',  font=(FONTTYPE, 18))
+    fell = Label(root, text="AGENT FELL IN PIT", fg='Red', bg='black',  font=(FONTTYPE, 16))
+
+    reset.place(x=20, y=435)
+
+    # Main simulation loop
+    root.mainloop()
+    #
 
 
-        # Updates the sim with each move
-        def resetGame():
-            sim.reset_stats(0)
-            sim.generate_simulation()
-            app.reset_display(sim)
-            eaten.place_forget()
-            fell.place_forget()
-            climbOut.place_forget()
-            makeMove.place(x=420, y=225)
+def run_nongui():
+    print('Running Non-GUI...')
+    print('\n')
+    # RUN SIMULATION WHILE WRITING TO standard output
+    sim = Simulation(ROWS, COLUMNS, 0)
+    sim.generate_simulation()
+    wl = sim.wumpusLoc
+    gl = sim.goldLocation
+    pl = []
+    for i in range(4):
+        for j in range(4):
+            if sim.pits['room' + str(i) + str(j)] is True:
+                pl.append((i, j))
+    moveCount = 0
 
-
-        def updateSim():
-            sim.move()
-            sim.update_score()
-            if (sim.terminal_test() and sim.lastMove.lower() == 'climb'):
-                climbOut.place(x=420, y=400)
-                makeMove.place_forget()
-            elif (sim.terminal_test()):
-                if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
-                    eaten.place(x=420, y=400)
-                else:
-                    fell.place(x=420, y=400)
-                makeMove.place_forget()
-            app.update_move(sim)
-
-
-        # Methods for the buttons to operate the agent manually
-        def movePlayer():
-            sim.agent_move('move')
-            sim.update_score()
-            if (sim.terminal_test()):
-                if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
-                    eaten.place(x=420, y=400)
-                else:
-                    fell.place(x=420, y=400)
-                makeMove.place_forget()
-            app.update_move(sim)
-
-
-        def moveLeft():
-            sim.agent_move('left')
-            sim.update_score()
-            if (sim.terminal_test()):
-                if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
-                    eaten.place(x=420, y=400)
-                else:
-                    fell.place(x=420, y=400)
-                makeMove.place_forget()
-            app.update_move(sim)
-
-
-        def moveRight():
-            sim.agent_move('right')
-            sim.update_score()
-            if (sim.terminal_test()):
-                if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
-                    eaten.place(x=420, y=400)
-                else:
-                    fell.place(x=420, y=400)
-                makeMove.place_forget()
-            app.update_move(sim)
-
-
-        def grab():
-            sim.agent_move('grab')
-            sim.update_score()
-            if (sim.terminal_test()):
-                if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
-                    eaten.place(x=420, y=400)
-                else:
-                    fell.place(x=420, y=400)
-                makeMove.place_forget()
-            app.update_move(sim)
-
-
-        def climb():
-            sim.agent_move('climb')
-            sim.update_score()
-            if (sim.terminal_test()):
-                if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
-                    eaten.place(x=420, y=400)
-                else:
-                    fell.place(x=420, y=400)
-                makeMove.place_forget()
-            app.update_move(sim)
-
-
-        def shoot():
-            sim.agent_move('shoot')
-            sim.update_score()
-            if (sim.terminal_test()):
-                if (sim.agentPos == sim.wumpusLoc) and (sim.wumpusAlive is True):
-                    eaten.place(x=420, y=400)
-                else:
-                    fell.place(x=420, y=400)
-                makeMove.place_forget()
-            app.update_move(sim)
-
-
-        # The move button
-        makeMove = Button(root, text="Move", font=(FONTTYPE, 14), command=updateSim)
-        makeMove.place(x=420, y=225)
-
-        reset = Button(root, text="Reset", font=(FONTTYPE, 14), command=resetGame)
-        eaten = Label(root, text="WUMPUS ATE AGENT", fg='Red', font=(FONTTYPE, 16))
-        climbOut = Label(root, text="Player climbed out", fg='Green', font=(FONTTYPE, 18))
-        fell = Label(root, text="AGENT FELL IN PIT", fg='Red', font=(FONTTYPE, 16))
-
-        reset.place(x=420, y=435)
-
-        # Main simulation loop
-        root.mainloop()
-        #
-    elif (arglist[1].lower() == '-nongui'):
-        print('Running Non-GUI...')
-        print('\n')
-        # RUN SIMULATION WHILE WRITING TO standard output
-        sim = Simulation(ROWS, COLUMNS, 0)
-        sim.generate_simulation()
-        wl = sim.wumpusLoc
-        gl = sim.goldLocation
-        pl = []
-        for i in range(4):
-            for j in range(4):
-                if sim.pits['room' + str(i) + str(j)] is True:
-                    pl.append((i, j))
-        moveCount = 0
-
-        # Print the steps
-        print('START OF SIMULATION')
-        while (sim.terminal_test() is not True):
-            print('------------------------------------------------------------------')
-            print(('Move: ', moveCount))
-            print(('Last Action: ', sim.lastMove))
-            print('\n')
-            print('Wumpus World Item Locations:')
-            print(('Wumpus Location: ', wl, '   Gold Location: ', gl))
-            print(('Pit Locations: ', str(pl)))
-            print('\n')
-            print('Agent Info:')
-            print(('Position: ', sim.agentPos, '   Facing: ', sim.agentFacing))
-            print(('Has Gold: ', str(sim.hasGold), '   Arrow: ', sim.arrow))
-            print('\n')
-            print('Simulation Current States:')
-            print(('Wumpus Alive: ', str(sim.wumpusAlive), '   Performance: ', sim.score))
-            print(('Current Percepts: ', str(sim.percepts['room' + str(sim.agentPos[0]) + str(sim.agentPos[1])])))
-            # Prompt agent to move
-            sim.move()
-            sim.update_score()
-            moveCount = moveCount + 1
-        # Print final result
+    # Print the steps
+    print('START OF SIMULATION')
+    while sim.terminal_test() is not True:
         print('------------------------------------------------------------------')
+        print(('Move: ', moveCount))
         print(('Last Action: ', sim.lastMove))
-        print('GAME OVER')
         print('\n')
-        if sim.lastMove.lower() == 'climb':
-            print('Agent has climbed out of cave.')
-        elif sim.agentPos == sim.wumpusLoc:
-            print('Agent was eaten by the wumpus and died!')
-        else:
-            print('Agent fell into pit and died!')
+        print('Wumpus World Item Locations:')
+        print(('Wumpus Location: ', wl, '   Gold Location: ', gl))
+        print(('Pit Locations: ', str(pl)))
         print('\n')
-        print(('Final Performance: ', sim.score))
-
-    elif (arglist[1].lower() == '-help'):
-        print('------------------------------------------------------------------')
-        print('This python program runs a simulation of Wumpus World.')
+        print('Agent Info:')
+        print(('Position: ', sim.agentPos, '   Facing: ', sim.agentFacing))
+        print(('Has Gold: ', str(sim.hasGold), '   Arrow: ', sim.arrow))
         print('\n')
-        print('To run the GUI represented version, run the following command:')
-        print('>\tpython simulation.py -gui')
-        print('\n')
-        print('To run the Non-GUI version, run the following command:')
-        print('>\tpython simulation.py -nongui')
-        print('------------------------------------------------------------------')
+        print('Simulation Current States:')
+        print(('Wumpus Alive: ', str(sim.wumpusAlive), '   Performance: ', sim.score))
+        print(('Current Percepts: ', str(sim.percepts['room' + str(sim.agentPos[0]) + str(sim.agentPos[1])])))
+        # Prompt agent to move
+        sim.move()
+        sim.update_score()
+        moveCount = moveCount + 1
+    # Print final result
+    print('------------------------------------------------------------------')
+    print(('Last Action: ', sim.lastMove))
+    print('GAME OVER')
+    print('\n')
+    if sim.lastMove.lower() == 'climb':
+        print('Agent has climbed out of cave.')
+    elif sim.agentPos == sim.wumpusLoc:
+        print('Agent was eaten by the wumpus and died!')
     else:
-        raise Exception('Invalid command-line argument. Run \'python wwsim.py -help\' for help.');
-else:
-    raise Exception('Invalid command-line call. Run \'python wwsim.py -help\' for help.');
+        print('Agent fell into pit and died!')
+    print('\n')
+    print(('Final Performance: ', sim.score))
+

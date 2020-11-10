@@ -63,7 +63,7 @@ class Wumpus_World_KB():
 
     def ask(self, sentence):
         satisfiable = dpll_satisfiable(self.knows & ~sentence)
-        if (satisfiable):
+        if satisfiable:
             return False
         else:
             return True
@@ -97,21 +97,21 @@ class WWAgent:
         # [stench, breeze, glitter, bump, scream]
 
     def update_stats(self, pastAction):
-        if (self.percepts[4] == 'scream'):
+        if self.percepts[4] == 'scream':
             self.wumpusAlive = False
-        if (pastAction == 'right'):
+        if pastAction == 'right':
             self.facing = (self.facing + 1) % 4
-        elif (pastAction == 'left'):
-            if (self.facing == 0):
+        elif pastAction == 'left':
+            if self.facing == 0:
                 self.facing = 3
             else:
                 self.facing = (self.facing - 1)
         # ASSUMING AGENT ONLY GRABS IF ON GOLD
-        elif (pastAction == 'grab'):
+        elif pastAction == 'grab':
             self.hasGold = True
-        elif (pastAction == 'shoot'):
+        elif pastAction == 'shoot':
             self.arrow = 0
-        elif (pastAction == 'move'):
+        elif pastAction == 'move':
             # Update position
             p = self.position
             if (self.facing == 0) and ((p[0] - 1) >= 0):
@@ -148,7 +148,7 @@ class WWAgent:
             return temp
 
         goalPath = [goal]
-        while (len(goalPath) > 0):
+        while len(goalPath) > 0:
             gp = goalPath.pop()
             for x in neighbors(gp[0], gp[1], goalPath):
                 if vis[x] > vis[gp] + 1:
@@ -157,7 +157,7 @@ class WWAgent:
         dis = vis[pos]
         while dis > 1:
             for v in neighbors(pos[0], pos[1], goalPath):
-                if (vis[v] < dis):
+                if vis[v] < dis:
                     dis = dis - 1
                     path.append(v)
                     pos = v
@@ -206,19 +206,19 @@ class WWAgent:
             lpos = self.lastPos
             # print(pos)
             self.knownWorld[pos[0]][pos[1]] = self.percepts
-            if (self.percepts[0] == 'stench'):
+            if self.percepts[0] == 'stench':
                 toTell = 'S%s%s' % (pos[0], pos[1])
                 self.kb.tell(expr(toTell))
             else:
                 toTell = '~S%s%s' % (pos[0], pos[1])
                 self.kb.tell(expr(toTell))
-            if (self.percepts[1] == 'breeze'):
+            if self.percepts[1] == 'breeze':
                 toTell = 'B%s%s' % (pos[0], pos[1])
                 self.kb.tell(expr(toTell))
             else:
                 toTell = '~B%s%s' % (pos[0], pos[1])
                 self.kb.tell(expr(toTell))
-            if (self.percepts[4] == 'scream'):
+            if self.percepts[4] == 'scream':
                 self.wumpusAlive = False
             toTell1 = '~W%s%s' % (pos[0], pos[1])
             toTell2 = '~P%s%s' % (pos[0], pos[1])
@@ -266,7 +266,7 @@ class WWAgent:
             action = 'grab'
         elif (self.position == (3, 0)) and ((self.hasGold is True) or (self.escape is True)):
             action = 'climb'
-        elif (len(self.plan) > 0):
+        elif len(self.plan) > 0:
             # TAKE ACTION FROM PLAN
             action = self.plan.pop()
         else:
@@ -286,7 +286,7 @@ class WWAgent:
                 else:
                     self.escape = True
                     self.unsureGoal = False
-            if (posGoals is not None):
+            if posGoals is not None:
                 tempGoal = posGoals.pop()
             else:
                 tempGoal = (3, 0)
